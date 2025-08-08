@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nostalgia Pixelator - Digital Memory Decay</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        body {
+            background-color: #0f0f0f;
+            font-family: 'VT323', monospace;
+            color: #e0e0e0;
+        }
+        
+        .retro-box {
+            border: 4px solid #3a3a3a;
+            background: #1a1a1a;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+        }
+        
+        .pixel-grid {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        
+        .pixel-border {
+            border: 2px dashed #444;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .neon-text {
+            text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background: linear-gradient(to right, #330033, #000055);
+            border: 1px solid #444;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #ff00ff, #00ffff);
+            transition: width 0.5s;
+        }
+        
+        /* Pixelation effect classes */
+        .pixel-1 { filter: blur(0.5px) grayscale(10%); }
+        .pixel-2 { filter: blur(1px) grayscale(20%); }
+        .pixel-3 { filter: blur(1.5px) grayscale(30%); }
+        .pixel-4 { filter: blur(2px) grayscale(40%); }
+        .pixel-5 { filter: blur(2.5px) grayscale(50%); }
+        .pixel-6 { filter: blur(3px) grayscale(60%); }
+        .pixel-7 { filter: blur(3.5px) grayscale(70%); }
+        .pixel-8 { filter: blur(4px) grayscale(80%); }
+        .pixel-9 { filter: blur(4.5px) grayscale(90%); }
+        .pixel-10 { filter: blur(5px) grayscale(100%); }
+        
+        .image-tile {
+            transition: all 0.3s ease;
+        }
+        
+        .image-tile:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+        
+        .glitch {
+            position: relative;
+        }
+        
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(17, 17, 17, 0.7);
+        }
+        
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 #ff00ff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim-1 2s infinite linear alternate-reverse;
+        }
+        
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 #00ffff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim-2 2s infinite linear alternate-reverse;
+        }
+        
+        @keyframes glitch-anim-1 {
+            0% { clip: rect(31px, 9999px, 94px, 0); }
+            10% { clip: rect(112px, 9999px, 76px, 0); }
+            20% { clip: rect(85px, 9999px, 77px, 0); }
+            30% { clip: rect(27px, 9999px, 97px, 0); }
+            40% { clip: rect(64px, 9999px, 98px, 0); }
+            50% { clip: rect(61px, 9999px, 85px, 0); }
+            60% { clip: rect(99px, 9999px, 114px, 0); }
+            70% { clip: rect(34px, 9999px, 115px, 0); }
+            80% { clip: rect(98px, 9999px, 129px, 0); }
+            90% { clip: rect(95px, 9999px, 96px, 0); }
+            100% { clip: rect(82px, 9999px, 64px, 0); }
+        }
+        
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(65px, 9999px, 119px, 0); }
+            10% { clip: rect(25px, 9999px, 145px, 0); }
+            20% { clip: rect(125px, 9999px, 129px, 0); }
+            30% { clip: rect(88px, 9999px, 132px, 0); }
+            40% { clip: rect(67px, 9999px, 102px, 0); }
+            50% { clip: rect(35px, 9999px, 85px, 0); }
+            60% { clip: rect(33px, 9999px, 148px, 0); }
+            70% { clip: rect(116px, 9999px, 105px, 0); }
+            80% { clip: rect(4px, 9999px, 37px, 0); }
+            90% { clip: rect(121px, 9999px, 120px, 0); }
+            100% { clip: rect(141px, 9999px, 108px, 0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <header class="bg-black py-6 px-4 border-b border-cyan-900">
+        <div class="container mx-auto">
+            <h1 class="glitch text-3xl md:text-5xl text-center mb-2 font-mono" data-text="Nostalgia Pixelator">Nostalgia Pixelator</h1>
+            <p class="text-center text-gray-400 mb-0">Digital Memory Decay Machine</p>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <div class="retro-box rounded-lg p-6 mb-8">
+            <div class="flex flex-col md:flex-row gap-8">
+                <div class="flex-grow">
+                    <h2 class="text-xl md:text-2xl mb-4 font-mono border-b border-gray-700 pb-2">Upload Memories</h2>
+                    <div id="drop-zone" class="border-2 border-dashed border-gray-700 rounded-lg p-8 text-center cursor-pointer hover:bg-gray-800 transition mb-4">
+                        <input type="file" id="file-input" accept="image/*" class="hidden" multiple>
+                        <div class="flex flex-col items-center justify-center h-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-cyan-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            <p class="text-gray-300 mb-2">Drag & drop photos here</p>
+                            <p class="text-gray-500 text-sm">or click to browse</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-1/3" id="decay-controls" style="display:none;">
+                    <h2 class="text-xl md:text-2xl mb-4 font-mono border-b border-gray-700 pb-2">Decay Controls</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-gray-300 mb-2">Moderator: Decay Speed</label>
+                            <input type="range" id="mod-decay-speed" min="100" max="10000" value="300" step="100">
+                            <span id="mod-decay-label" class="text-gray-400 ml-2">300 ms</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="retro-box rounded-lg p-6 mb-8">
+            <h2 class="text-xl md:text-2xl mb-6 font-mono border-b border-gray-700 pb-2">Memory Vault</h2>
+            <div id="image-gallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div class="image-tile retro-box rounded-lg overflow-hidden relative group">
+                    <img src="https://placehold.co/600x400/1a1a1a/555?text=Waiting+for+memories..." alt="Empty memory slot placeholder image" class="w-full h-48 object-cover pixel-grid">
+                    <div class="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span class="text-gray-300">Upload your first memory</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="retro-box rounded-lg p-6 mb-8">
+            <h2 class="text-xl md:text-2xl mb-6 font-mono border-b border-gray-700 pb-2">Bin</h2>
+            <div id="bin-gallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+        </div>
+
+        <div class="retro-box rounded-lg p-6 mb-8">
+            <h2 class="text-xl md:text-2xl mb-6 font-mono border-b border-gray-700 pb-2">Restored Images</h2>
+            <div id="restored-gallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+        </div>
+
+        <div class="retro-box rounded-lg p-6" id="stats-section" style="display:none;">
+            <h2 class="text-xl md:text-2xl mb-4 font-mono border-b border-gray-700 pb-2">Memory Decay Stats</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-gray-800 rounded-lg p-4">
+                    <h3 class="text-gray-400 mb-2">Total Memories</h3>
+                    <p class="text-3xl text-cyan-400 font-mono" id="total-memories">0</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-4">
+                    <h3 class="text-gray-400 mb-2">Average Decay</h3>
+                    <div class="progress-bar rounded mt-2">
+                        <div class="progress-fill rounded" id="avg-decay-bar" style="width: 0%"></div>
+                    </div>
+                    <p class="text-right text-xs mt-1 text-gray-400" id="avg-decay-percent">0%</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-4">
+                    <h3 class="text-gray-400 mb-2">Oldest Memory</h3>
+                    <p class="text-xl text-purple-400 font-mono" id="oldest-memory">None yet</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-black py-4 px-6 border-t border-cyan-900 text-center text-gray-500 text-sm">
+        <p>The Nostalgia Pixelator - A meditation on digital memory decay</p>
+        <p class="mt-1"><span id="current-date" class="font-mono"></span></p>
+    </footer>
+    <script>
+        // Current date display
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        let uploadedImages = [];
+        let decayIntervals = {};
+        let binImages = [];
+        let restoredImages = [];
+
+        // DOM elements
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const imageGallery = document.getElementById('image-gallery');
+        const binGallery = document.getElementById('bin-gallery');
+        const restoredGallery = document.getElementById('restored-gallery');
+        const totalMemoriesEl = document.getElementById('total-memories');
+        const avgDecayBar = document.getElementById('avg-decay-bar');
+        const avgDecayPercent = document.getElementById('avg-decay-percent');
+        const oldestMemoryEl = document.getElementById('oldest-memory');
+        const statsSection = document.getElementById('stats-section');
+        const decayControls = document.getElementById('decay-controls');
+        const modDecaySpeed = document.getElementById('mod-decay-speed');
+        const modDecayLabel = document.getElementById('mod-decay-label');
+
+        const isModerator = true; 
+        if (isModerator) {
+            decayControls.style.display = 'block';
+            statsSection.style.display = 'block';
+        }
+
+        let globalDecayInterval = 300; 
+        if (modDecaySpeed) {
+            modDecaySpeed.addEventListener('input', () => {
+                globalDecayInterval = parseInt(modDecaySpeed.value, 10);
+                modDecayLabel.textContent = `${globalDecayInterval} ms`;
+                restartAllDecay();
+            });
+        }
+
+        function restartAllDecay() {
+            uploadedImages.forEach(img => {
+                if (decayIntervals[img.id]) {
+                    clearInterval(decayIntervals[img.id]);
+                }
+                decayIntervals[img.id] = setInterval(() => {
+                    incrementDecay(img.id);
+                }, globalDecayInterval);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await fetchImages();
+            restartAllDecay();
+        });
+
+        async function fetchImages() {
+            const response = await fetch('/api/images');
+            const images = await response.json();
+            uploadedImages = images.filter(img => !img.inBin);
+            binImages = images.filter(img => img.inBin);
+            updateGallery();
+        }
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-cyan-500', 'bg-gray-800');
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-cyan-500', 'bg-gray-800');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-cyan-500', 'bg-gray-800');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                handleFiles(fileInput.files);
+            }
+        });
+
+        async function handleFiles(files) {
+            for (const file of files) {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                        const imageData = e.target.result;
+                        const formData = new FormData();
+                        formData.append('image', file);
+                        formData.append('name', file.name);
+                        formData.append('src', imageData);
+                        formData.append('pixelationLevel', 0);
+
+                        const response = await fetch('/api/upload', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const newImage = await response.json();
+                        uploadedImages.push(newImage);
+                        updateGallery();
+                        restartAllDecay();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+
+        function renderImage(image) {
+            const tile = document.createElement('div');
+            tile.className = 'image-tile retro-box rounded-lg overflow-hidden relative group';
+            tile.id = image.id;
+
+            const img = document.createElement('img');
+            img.src = image.src;
+            img.alt = `Memory image: ${image.name}`;
+            img.className = `w-full h-48 object-cover ${getPixelationClass(image.pixelationLevel)}`;
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'absolute top-2 right-2 bg-gray-800 bg-opacity-80 hover:bg-red-600 text-white rounded-full p-2 transition opacity-0 group-hover:opacity-100';
+            deleteBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
+            deleteBtn.title = 'Delete';
+            deleteBtn.onclick = () => moveToBin(image.id);
+
+            const restoreBtn = document.createElement('button');
+            restoreBtn.className = 'absolute bottom-2 right-2 bg-cyan-700 bg-opacity-80 hover:bg-cyan-500 text-white px-4 py-2 rounded transition opacity-0 group-hover:opacity-100';
+            restoreBtn.textContent = 'Restore with AI';
+            restoreBtn.onclick = () => aiRestoreImage(image.id);
+
+            const overlay = document.createElement('div');
+            overlay.className = 'absolute inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity p-2';
+
+            const nameText = document.createElement('span');
+            nameText.className = 'text-gray-300 text-sm truncate w-full px-2 text-center';
+            nameText.textContent = image.name;
+
+            const dateText = document.createElement('span');
+            dateText.className = 'text-gray-400 text-xs mt-1';
+            dateText.textContent = new Date(image.uploaded).toLocaleDateString();
+
+            const decayText = document.createElement('span');
+            decayText.className = 'text-gray-400 text-xs mt-2';
+            decayText.textContent = `Decay: ${Math.round(image.pixelationLevel * 100)}%`;
+
+            overlay.appendChild(nameText);
+            overlay.appendChild(dateText);
+            overlay.appendChild(decayText);
+
+            tile.appendChild(img);
+            tile.appendChild(overlay);
+            tile.appendChild(deleteBtn);
+            tile.appendChild(restoreBtn);
+
+            const existingTile = document.getElementById(image.id);
+            if (existingTile) {
+                existingTile.replaceWith(tile);
+            } else {
+                imageGallery.appendChild(tile);
+            }
+        }
+
+        function renderBinImage(image) {
+            const tile = document.createElement('div');
+            tile.className = 'image-tile retro-box rounded-lg overflow-hidden relative group';
+            tile.id = 'bin-' + image.id;
+
+            const img = document.createElement('img');
+            img.src = image.src;
+            img.alt = `Deleted memory: ${image.name}`;
+            img.className = 'w-full h-48 object-cover grayscale';
+
+            const restoreBtn = document.createElement('button');
+            restoreBtn.className = 'absolute top-2 right-2 bg-gray-800 bg-opacity-80 hover:bg-green-600 text-white rounded-full p-2 transition opacity-0 group-hover:opacity-100';
+            restoreBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h2l1 9h10l1-9h2M9 21h6M4 7h16M4 7V4a1 1 0 011-1h14a1 1 0 011 1v3"/></svg>';
+            restoreBtn.title = 'Restore';
+            restoreBtn.onclick = () => restoreFromBin(image.id);
+
+            const overlay = document.createElement('div');
+            overlay.className = 'absolute inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity p-2';
+
+            const nameText = document.createElement('span');
+            nameText.className = 'text-gray-300 text-sm truncate w-full px-2 text-center';
+            nameText.textContent = image.name;
+
+            overlay.appendChild(nameText);
+
+            tile.appendChild(img);
+            tile.appendChild(overlay);
+            tile.appendChild(restoreBtn);
+            binGallery.appendChild(tile);
+        }
+
+        function renderRestoredImage(image) {
+            const tile = document.createElement('div');
+            tile.className = 'image-tile retro-box rounded-lg overflow-hidden relative group';
+            tile.id = 'restored-' + image.id;
+
+            const img = document.createElement('img');
+            img.src = image.src;
+            img.alt = `Restored memory: ${image.name}`;
+            img.className = 'w-full h-48 object-cover bg-white';
+
+            const overlay = document.createElement('div');
+            overlay.className = 'absolute inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity p-2';
+
+            const nameText = document.createElement('span');
+            nameText.className = 'text-gray-300 text-sm truncate w-full px-2 text-center';
+            nameText.textContent = image.name;
+
+            overlay.appendChild(nameText);
+
+            tile.appendChild(img);
+            tile.appendChild(overlay);
+            restoredGallery.appendChild(tile);
+        }
+
+        function getPixelationClass(level) {
+            const classes = [
+                '', 'pixel-1', 'pixel-2', 'pixel-3', 'pixel-4', 
+                'pixel-5', 'pixel-6', 'pixel-7', 'pixel-8', 'pixel-9', 'pixel-10'
+            ];
+            return classes[Math.min(Math.floor(level * 10), 10)];
+        }
+
+        async function incrementDecay(id) {
+            const image = uploadedImages.find(img => img.id === id);
+            if (image) {
+                image.pixelationLevel = Math.min(image.pixelationLevel + 0.05, 1);
+                
+                // Update the image in the gallery
+                const imgEl = document.querySelector(`#${image.id} img`);
+                if (imgEl) {
+                    imgEl.className = `w-full h-48 object-cover ${getPixelationClass(image.pixelationLevel)}`;
+                }
+
+                const decayTextEl = document.querySelector(`#${image.id} span.text-gray-400`);
+                if (decayTextEl) {
+                    decayTextEl.textContent = `Decay: ${Math.round(image.pixelationLevel * 100)}%`;
+                }
+
+                // Stop decaying if fully degraded
+                if (image.pixelationLevel >= 1) {
+                    clearInterval(decayIntervals[id]);
+                    delete decayIntervals[id];
+                }
+                updateStats();
+            }
+        }
+
+        async function moveToBin(id) {
+            await fetch(`/api/bin/${id}`, { method: 'PUT' });
+            await fetchImages();
+            if (decayIntervals[id]) {
+                clearInterval(decayIntervals[id]);
+                delete decayIntervals[id];
+            }
+        }
+
+        async function restoreFromBin(id) {
+            const imageToRestore = binImages.find(img => img.id === id);
+            if (imageToRestore) {
+                // If it's already restored from the bin, show the blank page.
+                if (imageToRestore.restoredFromBin) {
+                    const restoredImgEl = document.querySelector(`#restored-gallery #restored-${id} img`);
+                    if (restoredImgEl) {
+                        restoredImgEl.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwAB/2c6chAAAAAASUVORK5CYII='; // A 1x1 blank white pixel
+                    } else {
+                        // Create a new tile if it doesn't exist
+                        renderRestoredImage({ ...imageToRestore, src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwAB/2c6chAAAAAASUVORK5CYII=' });
+                    }
+                    return;
+                }
+                
+                // Perform the AI restoration
+                const response = await fetch('/api/restore', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ imageId: id })
+                });
+                const data = await response.json();
+                
+                // Find the image in binImages and move it to restoredImages
+                const restoredImage = binImages.find(img => img.id === id);
+                if (restoredImage) {
+                    restoredImage.src = `data:image/jpeg;base64,${data.restoredImage}`;
+                    restoredImage.restoredFromBin = true;
+                    restoredImages.push(restoredImage);
+                    
+                    const binIndex = binImages.findIndex(img => img.id === id);
+                    if (binIndex > -1) {
+                        binImages.splice(binIndex, 1);
+                    }
+                    updateGallery();
+                }
+            }
+        }
+
+        async function aiRestoreImage(id) {
+            const imageToRestore = uploadedImages.find(img => img.id === id);
+            if (!imageToRestore) {
+                return;
+            }
+
+            const response = await fetch('/api/restore', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ imageId: id })
+            });
+            const data = await response.json();
+
+            const restored = { ...imageToRestore, src: `data:image/jpeg;base64,${data.restoredImage}` };
+            restoredImages.push(restored);
+            updateGallery();
+        }
+
+        function updateGallery() {
+            imageGallery.innerHTML = '';
+            uploadedImages.forEach(renderImage);
+
+            binGallery.innerHTML = '';
+            binImages.forEach(renderBinImage);
+
+            restoredGallery.innerHTML = '';
+            restoredImages.forEach(renderRestoredImage);
+            
+            updateStats();
+        }
+
+        function updateStats() {
+            totalMemoriesEl.textContent = uploadedImages.length;
+            if (uploadedImages.length > 0) {
+                const totalDecay = uploadedImages.reduce((sum, img) => sum + img.pixelationLevel, 0);
+                const avgDecay = totalDecay / uploadedImages.length;
+                const avgPercent = Math.round(avgDecay * 100);
+
+                avgDecayBar.style.width = `${avgPercent}%`;
+                avgDecayPercent.textContent = `${avgPercent}%`;
+
+                const oldest = uploadedImages.reduce((oldest, img) => 
+                    new Date(img.uploaded) < new Date(oldest.uploaded) ? img : oldest
+                , uploadedImages[0]);
+                oldestMemoryEl.textContent = new Date(oldest.uploaded).toLocaleDateString();
+            } else {
+                avgDecayBar.style.width = '0%';
+                avgDecayPercent.textContent = '0%';
+                oldestMemoryEl.textContent = 'None yet';
+            }
+        }
+    </script>
+</body>
+</html>
